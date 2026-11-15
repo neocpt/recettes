@@ -4,7 +4,7 @@
 const TYPES = ['plat', 'entrée', 'apéro', 'dessert', 'petit-déj', 'goûter', 'boisson', 'sauce', 'autre'];
 const TYPE_ICON = { plat: '🍲', 'entrée': '🥗', 'apéro': '🧀', dessert: '🍰', 'petit-déj': '🥞', 'goûter': '🍪', boisson: '🥤', sauce: '🫙', autre: '🍽️' };
 const MAX_MISSING = 2;
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 
 const $ = (s) => document.querySelector(s);
 let recipes = [];
@@ -330,27 +330,66 @@ function scanExport(root, fileName, groups) {
   }(root));
 }
 
-// Version HTML (format par défaut d'Instagram) : chaque entrée est un bloc ; un bloc sans lien = nom de collection.
+// Version HTML (format par défaut d'Instagram). Deux variantes :
+// - ancienne : un bloc par entrée, un bloc « Nom : X » sans lien = début de la collection X ;
+// - nouvelle : un bloc par collection, qui commence par « Nom : X » puis contient toutes ses vidéos.
 function scanHtml(html, fileName, groups) {
   let current = groupLabel(fileName);
   const add = (u) => { if (!groups.has(current)) groups.set(current, new Set()); groups.get(current).add(u); };
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const sel = 'div.uiBoxWhite, div._a6-g';
   const blocks = [...doc.querySelectorAll(sel)].filter((b) => !b.parentElement?.closest(sel));
-  const urlsOf = (el) => [...new Set([...el.querySelectorAll('a[href]')].flatMap((a) => findVideoUrls(a.getAttribute('href')))
-    .concat(findVideoUrls(el.textContent)))];
-  if (!blocks.length) { urlsOf(doc).forEach(add); return; }
+  const urlsOf = (el) => {
+    const out = [...el.querySelectorAll('a[href]')].flatMap((a) => findVideoUrls(a.getAttribute('href')));
+    const w = doc.createTreeWalker(el, NodeFilter.SHOW_TEXT); // texte nœud par nœud : sinon l'URL se colle au texte suivant
+    while (w.nextNode()) out.push(...findVideoUrls(w.currentNode.textContent));
+    return [...new Set(out)];
+  };
+  if (!blocks.length) { urlsOf(doc.body || doc.documentElement).forEach(add); return; }
+  const isCollections = /saved_collections/i.test(fileName);
   for (const b of blocks) {
-    const urls = urlsOf(b);
-    if (urls.length) { urls.forEach(add); continue; }
-    if (!/saved_collections/i.test(fileName)) continue;
-    const texts = [];
-    const w = doc.createTreeWalker(b, NodeFilter.SHOW_TEXT);
-    while (w.nextNode()) { const t = w.currentNode.textContent.trim(); if (t) texts.push(t); }
-    const i = texts.findIndex((t) => NAME_LABEL.test(t.replace(/\s*:$/, '')));
-    const name = i >= 0 ? texts[i + 1] : texts.find((t) => !/^(collection|name|nom|creation time|update time|date)/i.test(t) && !/\d{4}|\d{1,2}:\d{2}/.test(t));
-    if (name) current = `Collection « ${name} »`;
+    if (isCollections) {
+      const nodes = [];
+      const w = doc.createTreeWalker(b, NodeFilter.SHOW_TEXT);
+      while (w.nextNode()) { const t = w.currentNode.textContent.trim(); if (t) nodes.push({ t, inLink: !!w.currentNode.parentElement.closest('a') }); }
+      const i = nodes.findIndex((n) => NAME_LABEL.test(fixText(n.t).replace(/\s*:$/, '')));
+      const v = i >= 0 ? nodes[i + 1] : null;
+      if (v && !v.inLink && !/^https?:/i.test(v.t)) current = `Collection « ${fixText(v.t).trim()} »`;
+    }
+    urlsOf(b).forEach(add);
   }
+}
+
+// Squelette d'un fichier d'export, sans liens ni textes personnels (pour diagnostiquer un format inconnu).
+const KEEP_LABEL = /^(nom|name|url|l.{1,3}gende|caption|titre|title|type|confidentialit.*|privacy|.*time|heure.*|date.*|collection)\s*:?$/i;
+function skeleton(text, name) {
+  if (/\.json$/i.test(name)) {
+    const shape = (o, d = 0) => {
+      if (d > 7) return '…';
+      if (Array.isArray(o)) return o.length <= 3 ? o.map((x) => shape(x, d + 1)) : [...o.slice(0, 2).map((x) => shape(x, d + 1)), `…x${o.length}`, shape(o[o.length - 1], d + 1)];
+      if (o && typeof o === 'object') {
+        const r = {};
+        for (const [k, v] of Object.entries(o).slice(0, 12)) r[k] = k === 'label' && typeof v === 'string' && KEEP_LABEL.test(fixText(v)) ? fixText(v) : shape(v, d + 1);
+        return r;
+      }
+      return typeof o === 'string' ? (findVideoUrls(o).length ? '<lien vidéo>' : `<texte ${o.length}>`) : typeof o;
+    };
+    try { return JSON.stringify(shape(JSON.parse(text)), null, 1).slice(0, 6000); } catch { return 'JSON illisible'; }
+  }
+  const doc = new DOMParser().parseFromString(text, 'text/html');
+  const sel = 'div.uiBoxWhite, div._a6-g';
+  const blocks = [...doc.querySelectorAll(sel)].filter((b) => !b.parentElement?.closest(sel)).slice(0, 2);
+  const root = blocks.length ? blocks : [doc.body];
+  return root.map((b) => {
+    const c = b.cloneNode(true);
+    const w = doc.createTreeWalker(c, NodeFilter.SHOW_TEXT);
+    const ts = [];
+    while (w.nextNode()) ts.push(w.currentNode);
+    ts.forEach((n) => { const t = n.textContent.trim(); if (t && !KEEP_LABEL.test(fixText(t))) n.textContent = findVideoUrls(t).length ? '<lien vidéo>' : `<texte ${t.length}>`; });
+    c.querySelectorAll('[href]').forEach((a) => a.setAttribute('href', findVideoUrls(a.getAttribute('href')).length ? 'lien-video' : 'lien'));
+    c.querySelectorAll('img,[src]').forEach((x) => x.removeAttribute('src'));
+    return c.outerHTML;
+  }).join('\n').slice(0, 6000);
 }
 
 async function importFile(file) {
@@ -358,7 +397,9 @@ async function importFile(file) {
   box.innerHTML = '<p class="small">Lecture du fichier…</p>';
   const groups = new Map();
   let names = [];
+  let savedFile = null;
   const scanText = (text, name) => {
+    if (/saved_collections/i.test(name)) savedFile = { text, name };
     if (/\.json$/i.test(name)) { try { scanExport(JSON.parse(text), name, groups); } catch { /* JSON illisible */ } } else scanHtml(text, name, groups);
   };
   try {
@@ -384,7 +425,21 @@ async function importFile(file) {
     return;
   }
   const entries = [...groups.entries()];
-  box.innerHTML = `<p class="small">Coche ce que tu veux importer :</p><div class="groups">${entries.map(([g, s], i) => `<label><input type="checkbox" data-i="${i}" ${/recet/i.test(g) ? 'checked' : ''}> ${esc(g)} <small>(${s.size})</small></label>`).join('')}</div><button id="btnDoImport" class="primary">Importer</button>`;
+  const noCollections = savedFile && !entries.some(([g]) => g.startsWith('Collection'));
+  box.innerHTML = `${noCollections ? '<p class="small">⚠️ Je n’ai pas réussi à séparer tes collections. <button id="btnDebug" class="ghost">Envoyer le format à Claude</button><br>(seulement la structure du fichier : ni liens, ni légendes)</p>' : ''}<p class="small">Coche ce que tu veux importer :</p><div class="groups">${entries.map(([g, s], i) => `<label><input type="checkbox" data-i="${i}" ${/recet/i.test(g) ? 'checked' : ''}> ${esc(g)} <small>(${s.size})</small></label>`).join('')}</div><button id="btnDoImport" class="primary">Importer</button>`;
+  if (noCollections) {
+    $('#btnDebug').onclick = async () => {
+      try {
+        await sendRaw('[debug] format export', `Fichier : ${savedFile.name}
+Version ${APP_VERSION}
+
+\`\`\`
+${skeleton(savedFile.text, savedFile.name)}
+\`\`\``);
+        toast('Envoyé ✓ dis-le à Claude');
+      } catch (e) { toast(e.message); }
+    };
+  }
   $('#btnDoImport').onclick = async () => {
     const urls = new Set();
     box.querySelectorAll('input:checked').forEach((c) => entries[c.dataset.i][1].forEach((u) => { if (!known.has(u)) urls.add(u); }));

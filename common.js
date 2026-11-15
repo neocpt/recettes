@@ -41,13 +41,15 @@ const VIDEO_RE = /https?:\/\/(?:www\.|m\.)?(?:instagram\.com\/(?:[\w.]+\/)?(?:p|
 const findVideoUrls = (text) => [...new Set((String(text || '').match(VIDEO_RE) || []).map((u) => u.replace(/[).,;]+$/, '')))];
 
 // ---- envoi d'une demande (= une issue GitHub, traitée automatiquement par le robot)
-async function sendCommand(title, body) {
+const sendCommand = (title, body) => sendRaw(`[recette] ${title}`, body);
+
+async function sendRaw(title, body) {
   const token = cleanToken(cfg().token);
   if (!token) throw new Error("Ajoute d'abord ton code d'accès dans les réglages ⚙️");
   const r = await fetch(`${API}/issues`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: `[recette] ${title}`, body }),
+    body: JSON.stringify({ title, body }),
   });
   if (r.status === 401 || r.status === 403 || r.status === 404) throw new Error("Code d'accès refusé : vérifie-le dans les réglages ⚙️");
   if (!r.ok) throw new Error(`GitHub a répondu ${r.status}, réessaie dans un moment`);
