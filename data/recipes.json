@@ -1,5 +1,89 @@
 [
  {
+  "id": "ig_DcXTxs6O69n",
+  "url": "https://www.instagram.com/reel/DcXTxs6O69n/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T18:15:35Z",
+  "titre": "Spaghetti aux oignons caramelisés et à l'ail",
+  "auteur_video": "Ben Chelin",
+  "temps_min": 35,
+  "type": "plat",
+  "portions": 4,
+  "ingredients": [
+   {
+    "nom": "1 gros oignon émincé",
+    "base": "oignon"
+   },
+   {
+    "nom": "4 gousses d'ail hachées",
+    "base": "ail"
+   },
+   {
+    "nom": "2 c. à soupe de chili crisp",
+    "base": "chili crisp"
+   },
+   {
+    "nom": "1 tasse de crème ou de lait de coco",
+    "base": "crème"
+   },
+   {
+    "nom": "1 c. à soupe de sauce soja",
+    "base": "sauce soja"
+   },
+   {
+    "nom": "1/2 tasse de parmesan frais râpé",
+    "base": "parmesan"
+   },
+   {
+    "nom": "225 g de pâtes",
+    "base": "pâtes"
+   },
+   {
+    "nom": "2 c. à soupe de beurre",
+    "base": "beurre"
+   },
+   {
+    "nom": "1 c. à soupe d'huile d'olive",
+    "base": "huile d'olive"
+   },
+   {
+    "nom": "1 c. à café de paprika",
+    "base": "paprika"
+   },
+   {
+    "nom": "1 c. à café de poudre d'ail",
+    "base": "poudre d'ail"
+   },
+   {
+    "nom": "1 c. à café de sel",
+    "base": "sel"
+   },
+   {
+    "nom": "1 c. à café de poivre",
+    "base": "poivre"
+   },
+   {
+    "nom": "1 c. à café d'assaisonnement italien",
+    "base": "assaisonnement italien"
+   }
+  ],
+  "etapes": [
+   "Faire fondre le beurre et l'huile d'olive dans une poêle à feu moyen, ajouter l'oignon et cuire 15 à 20 minutes jusqu'à ce qu'il soit doré et confit.",
+   "Pendant ce temps, cuire les pâtes dans de l'eau bouillante salée en réservant un peu d'eau de cuisson.",
+   "Ajouter l'ail haché et les épices aux oignons, laisser infuser une minute, puis incorporer le chili crisp et la crème.",
+   "Laisser mijoter quelques minutes, puis ajouter le parmesan râpé.",
+   "Ajouter les pâtes dans la sauce, mélanger en détendant avec l'eau de cuisson si nécessaire.",
+   "Servir chaud avec un supplément de chili crisp."
+  ],
+  "image": "img/ig_DcXTxs6O69n.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DfFdXaSpuUk",
   "url": "https://www.instagram.com/reel/DfFdXaSpuUk/",
   "plateforme": "instagram",
