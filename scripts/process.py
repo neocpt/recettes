@@ -321,7 +321,8 @@ def parse_command(body: str) -> dict:
     except json.JSONDecodeError:
         pass
     par = re.search(r"^\s*par\s*:\s*(.+)$", body, re.M | re.I)
-    return {"action": "ajout", "urls": URL_RE.findall(body), "par": par.group(1).strip() if par else ""}
+    name = URL_RE.sub("", par.group(1)).strip() if par else ""  # « par: Léa https://… » sur une seule ligne
+    return {"action": "ajout", "urls": URL_RE.findall(body), "par": name}
 
 
 def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> list[str]:
