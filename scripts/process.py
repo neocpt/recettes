@@ -35,9 +35,12 @@ DONE_FILE = ROOT / ".done_issues.json"
 
 GH_API = "https://api.github.com"
 GEMINI_API = "https://generativelanguage.googleapis.com"
-MODELS = [m for m in [os.environ.get("GEMINI_MODEL"), "gemini-flash-latest", "gemini-2.5-flash"] if m]
+# Chaque modèle a son propre quota gratuit par jour : quand l'un est épuisé, on passe au suivant.
+MODELS = [m for m in [os.environ.get("GEMINI_MODEL"), "gemini-flash-latest", "gemini-flash-lite-latest",
+                      "gemini-2.5-flash", "gemini-2.5-flash-lite"] if m]
+EXHAUSTED: set[str] = set()
 INLINE_MAX = 15 * 1024 * 1024  # au-delà : upload via l'API Files
-GIVE_UP_AFTER = dt.timedelta(days=2)  # erreurs temporaires (quota) : on réessaie pendant 2 jours
+GIVE_UP_AFTER = dt.timedelta(days=7)  # erreurs temporaires (quota) : on réessaie pendant 7 jours
 
 TYPES = ["plat", "entrée", "apéro", "dessert", "petit-déj", "goûter", "boisson", "sauce", "autre"]
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36"}
@@ -203,27 +206,35 @@ def gemini_call(key: str, parts: list[dict]) -> dict:
         "contents": [{"role": "user", "parts": parts}],
         "generationConfig": {"responseMimeType": "application/json", "responseSchema": SCHEMA, "temperature": 0.2},
     }
-    last = None
+    errors = []
     for model in MODELS:
-        for attempt in range(4):
+        if model in EXHAUSTED:
+            continue
+        for attempt in range(3):
             r = requests.post(f"{GEMINI_API}/v1beta/models/{model}:generateContent",
                               params={"key": key}, json=body, timeout=300)
-            if r.status_code == 404:
-                last = f"modèle {model} introuvable"
-                break  # modèle suivant
-            if r.status_code in (429, 500, 502, 503, 504):
-                last = f"{r.status_code} {r.text[:200]}"
+            if r.ok:
+                j = r.json()
+                try:
+                    text = j["candidates"][0]["content"]["parts"][0]["text"]
+                except (KeyError, IndexError):
+                    raise RuntimeError(f"Réponse Gemini vide : {json.dumps(j)[:300]}")
+                return json.loads(text)
+            msg = f"{model} → {r.status_code} {r.text[:160]}".replace("\n", " ")
+            if r.status_code == 429 and re.search(r"per ?day|PerDay|daily", r.text, re.I):
+                log(f"   quota du jour épuisé pour {model}, modèle suivant")
+                EXHAUSTED.add(model)  # inutile de le réessayer pendant ce run
+                errors.append(msg)
+                break
+            if r.status_code in (429, 500, 502, 503, 504):  # limite par minute ou panne passagère : on attend
                 time.sleep(20 * (attempt + 1))
                 continue
-            if not r.ok:
-                raise RuntimeError(f"Gemini {r.status_code}: {r.text[:300]}")
-            j = r.json()
-            try:
-                text = j["candidates"][0]["content"]["parts"][0]["text"]
-            except (KeyError, IndexError):
-                raise RuntimeError(f"Réponse Gemini vide : {json.dumps(j)[:300]}")
-            return json.loads(text)
-    raise Transient(f"Gemini indisponible : {last}")
+            errors.append(msg)  # 400/403/404 : ce modèle ne convient pas, on essaie le suivant
+            log(f"   {msg}")
+            break
+        else:
+            errors.append(msg)
+    raise Transient("Gemini indisponible : " + " | ".join(errors)[:600])
 
 
 def gemini_upload(key: str, path: Path, mime: str) -> tuple[str, str]:
@@ -440,7 +451,7 @@ def run_issues() -> int:
                                         "type": "autre", "portions": None, "ingredients": [], "etapes": [],
                                         "image": None, "statut": "a_completer", "source_extraction": None,
                                         "note": "L'analyse a échoué plusieurs fois (quota Gemini ?)."})
-                done.append({"n": issue["number"], "msg": f"abandon après 2 jours : {e}"})
+                done.append({"n": issue["number"], "msg": f"abandon après 7 jours : {e}"})
         except Exception as e:  # noqa: BLE001 - une issue cassée ne doit pas bloquer les autres
             log(f"   erreur : {e}")
             done.append({"n": issue["number"], "msg": f"erreur : {str(e)[:300]}"})
