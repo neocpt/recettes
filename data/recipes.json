@@ -1204,6 +1204,163 @@
   "note": ""
  },
  {
+  "id": "ig_Dav5IrmM-yF",
+  "url": "https://www.instagram.com/reel/Dav5IrmM-yF/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Pizza roses en forme de cœur",
+  "auteur_video": "Daniel & Veronik 🌹",
+  "temps_min": 30,
+  "type": "plat",
+  "portions": 2,
+  "ingredients": [
+   {
+    "nom": "1 pâte feuilletée",
+    "base": "pâte feuilletée"
+   },
+   {
+    "nom": "sauce tomate",
+    "base": "sauce tomate"
+   },
+   {
+    "nom": "fromage râpé",
+    "base": "fromage"
+   },
+   {
+    "nom": "salami en tranches",
+    "base": "salami"
+   }
+  ],
+  "etapes": [
+   "Dérouler la pâte feuilletée et la couper en bandes égales.",
+   "Ajouter de la sauce tomate sur chaque bande de pâte.",
+   "Parsemer de fromage râpé et disposer les tranches de salami le long de chaque bande.",
+   "Rouler chaque bande sur elle-même pour former des roses.",
+   "Disposer les roses de pizza dans un moule en forme de cœur recouvert de papier sulfurisé.",
+   "Faire cuire au four jusqu'à ce que la pâte soit dorée et le fromage fondu."
+  ],
+  "image": "img/ig_Dav5IrmM-yF.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DalAcqiNm1R",
+  "url": "https://www.instagram.com/reel/DalAcqiNm1R/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Cookies acidulés au citron",
+  "auteur_video": "Nono Foodies",
+  "temps_min": 45,
+  "type": "dessert",
+  "portions": 10,
+  "ingredients": [
+   {
+    "nom": "85 g de beurre",
+    "base": "beurre"
+   },
+   {
+    "nom": "110 g de sucre",
+    "base": "sucre"
+   },
+   {
+    "nom": "un demi œuf battu",
+    "base": "œuf"
+   },
+   {
+    "nom": "une cuillère à café d’arôme de vanille",
+    "base": "arôme de vanille"
+   },
+   {
+    "nom": "une cuillère à soupe de maïzena",
+    "base": "maïzena"
+   },
+   {
+    "nom": "180 g de farine",
+    "base": "farine"
+   },
+   {
+    "nom": "une pincée de sel",
+    "base": "sel"
+   },
+   {
+    "nom": "une demie cuillère à café de bicarbonate alimentaire",
+    "base": "bicarbonate alimentaire"
+   },
+   {
+    "nom": "le zeste de deux citrons",
+    "base": "citron"
+   },
+   {
+    "nom": "une cuillère à soupe de jus de citron",
+    "base": "jus de citron"
+   }
+  ],
+  "etapes": [
+   "Mélanger et travailler le sucre avec le zeste de citron du bout des doigts.",
+   "Travailler le beurre mou, puis ajouter le sucre au citron.",
+   "Ajouter l'œuf battu et l'arôme de vanille, puis mélanger bien.",
+   "Ajouter la farine, la maïzena, la pincée de sel, le bicarbonate et le jus de citron.",
+   "Mélanger le tout pour obtenir une pâte homogène.",
+   "Former des boules de pâte à l'aide d'une cuillère à glace et les rouler dans du sucre blanc.",
+   "Placer au congélateur 30 minutes.",
+   "Enfourner à 165 degrés pendant 10 à 12 minutes."
+  ],
+  "image": "img/ig_DalAcqiNm1R.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DWcBQ4KkSlw",
+  "url": "https://www.instagram.com/reel/DWcBQ4KkSlw/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Focaccia façon roulés à la cannelle",
+  "auteur_video": "Noelle Rae | Baking & Everyday Recipes",
+  "temps_min": null,
+  "type": "petit-déj",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "pâte à focaccia au levain ou à la levure",
+    "base": "pâte à focaccia"
+   },
+   {
+    "nom": "sucre roux",
+    "base": "sucre roux"
+   },
+   {
+    "nom": "cannelle",
+    "base": "cannelle"
+   },
+   {
+    "nom": "glaçage",
+    "base": "glaçage"
+   }
+  ],
+  "etapes": [
+   "Préparer une pâte à focaccia (au levain ou à la levure).",
+   "Former des boules de pâte, les tremper dans un mélange de sucre roux et de cannelle.",
+   "Disposer les boules dans un plat de cuisson chemisé de papier sulfurisé.",
+   "Faire cuire au four.",
+   "Napper de glaçage avant de servir."
+  ],
+  "image": "img/ig_DWcBQ4KkSlw.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DfvZSTmudWM",
   "url": "https://www.instagram.com/reel/DfvZSTmudWM/",
   "plateforme": "instagram",
