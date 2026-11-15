@@ -322,30 +322,58 @@ def extract(url: str, rid: str, key: str | None) -> dict:
         return fiche
 
 
-# ---------------------------------------------------------------- sauvegarde au fil de l'eau
+# ---------------------------------------------------------------- publication (sans conflit)
 CHECKPOINT_EVERY = 3
-_added = 0
+TOUCHED: set[str] = set()   # recettes ajoutées/modifiées pendant ce run
+DELETED: set[str] = set()   # recettes supprimées pendant ce run
+_since_publish = 0
 
 
-def checkpoint(recipes: list[dict], force: bool = False) -> None:
-    """Sur GitHub Actions : publie les recettes déjà analysées sans attendre la fin d'un gros import."""
-    global _added
-    if not force:
-        _added += 1
-        if _added % CHECKPOINT_EVERY:
-            return
+def _git(*args: str):
+    import subprocess
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+
+
+def publish(recipes: list[dict]) -> None:
+    """Enregistre les recettes. Sur GitHub Actions, fusionne avec la dernière version en ligne
+    (seules les recettes touchées par ce run sont écrites) puis pousse : jamais de conflit git."""
+    global _since_publish
+    _since_publish = 0
     save_recipes(recipes)
     if not os.environ.get("GITHUB_ACTIONS"):
         return
-    import subprocess
-    run = lambda *c: subprocess.run(c, cwd=ROOT, capture_output=True, text=True)
-    run("git", "add", "data", *(["img"] if IMG_DIR.exists() else []))
-    if run("git", "diff", "--cached", "--quiet").returncode == 0:
-        return
-    run("git", "commit", "-m", "Recettes mises à jour (en cours)")
-    run("git", "pull", "--rebase")
-    r = run("git", "push")
-    log("   ✔ recettes publiées" if r.returncode == 0 else f"   push intermédiaire raté : {r.stderr[:200]}")
+    for attempt in range(5):
+        _git("fetch", "-q", "origin", "main")
+        _git("reset", "-q", "--mixed", "origin/main")  # HEAD = version en ligne, nos fichiers restent sur le disque
+        shown = _git("show", "origin/main:data/recipes.json")
+        theirs = json.loads(shown.stdout or "[]") if shown.returncode == 0 else []
+        mine = {r["id"]: r for r in recipes if r["id"] in TOUCHED}
+        merged = {r["id"]: r for r in theirs if r["id"] not in DELETED}
+        merged.update(mine)
+        recipes[:] = list(merged.values())
+        save_recipes(recipes)
+        paths = ["data/recipes.json"] + [r["image"] for r in mine.values() if r.get("image") and (ROOT / r["image"]).exists()]
+        _git("add", "--", *paths)
+        for rid in DELETED:
+            _git("rm", "-q", "--cached", "--ignore-unmatch", f"img/{rid}.jpg")
+        if _git("diff", "--cached", "--quiet").returncode == 0:
+            return
+        _git("commit", "-q", "-m", "Recettes mises à jour")
+        r = _git("push", "-q", "origin", "HEAD:main")
+        if r.returncode == 0:
+            log(f"   ✔ {len(mine)} recette(s) publiée(s)")
+            return
+        log(f"   push refusé (essai {attempt + 1}/5), on refusionne : {r.stderr.strip()[:150]}")
+        time.sleep(3 + attempt * 3)
+    raise RuntimeError("Impossible de publier les recettes après 5 essais")
+
+
+def checkpoint(recipes: list[dict]) -> None:
+    """Pendant un gros import : publie toutes les 3 recettes, sans attendre la fin."""
+    global _since_publish
+    _since_publish += 1
+    if _since_publish >= CHECKPOINT_EVERY:
+        publish(recipes)
 
 
 # ---------------------------------------------------------------- commandes (issues)
@@ -377,6 +405,7 @@ def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> 
             if rid in by_id:  # déjà là : on ajoute juste la personne
                 if par not in by_id[rid]["par"]:
                     by_id[rid]["par"].append(par)
+                    TOUCHED.add(rid)
                 out.append(f"déjà présente : {by_id[rid]['titre']}")
                 continue
             log(f" → {url}")
@@ -384,6 +413,7 @@ def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> 
             rec = {"id": rid, "url": url, "plateforme": platform(rid), "par": [par], "ajoute_le": now, **fiche}
             recipes.append(rec)
             by_id[rid] = rec
+            TOUCHED.add(rid)
             out.append(f"{'✅' if rec['statut'] == 'ok' else '⚠️'} {rec['titre']} {rec['note']}".strip())
             checkpoint(recipes)
             time.sleep(4)  # ménage le quota gratuit de Gemini
@@ -393,11 +423,14 @@ def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> 
             allowed = {"titre", "temps_min", "type", "portions", "ingredients", "etapes", "par"}
             r.update({k: v for k, v in (cmd.get("data") or {}).items() if k in allowed})
             r["statut"], r["note"], r["source_extraction"] = "ok", "", "manuel"
+            TOUCHED.add(r["id"])
             out.append(f"modifiée : {r['titre']}")
     elif action == "suppr":
         r = by_id.get(cmd.get("id"))
         if r:
             recipes.remove(r)
+            DELETED.add(r["id"])
+            TOUCHED.discard(r["id"])
             if r.get("image"):
                 (ROOT / r["image"]).unlink(missing_ok=True)
             out.append(f"supprimée : {r['titre']}")
@@ -406,6 +439,7 @@ def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> 
         if r:
             log(f" → (réessai) {r['url']}")
             r.update(extract(r["url"], r["id"], key))
+            TOUCHED.add(r["id"])
             out.append(f"réanalysée : {r['titre']} {r['note']}".strip())
     else:
         out.append(f"commande inconnue : {action}")
@@ -445,6 +479,7 @@ def run_issues() -> int:
                 for raw in cmd.get("urls", []):
                     rid, url = canonical(raw)
                     if rid not in {r["id"] for r in recipes}:
+                        TOUCHED.add(rid)
                         recipes.append({"id": rid, "url": url, "plateforme": platform(rid),
                                         "par": [cmd.get("par") or "?"], "ajoute_le": issue["created_at"],
                                         "titre": "Recette à compléter", "auteur_video": "", "temps_min": None,
@@ -455,7 +490,7 @@ def run_issues() -> int:
         except Exception as e:  # noqa: BLE001 - une issue cassée ne doit pas bloquer les autres
             log(f"   erreur : {e}")
             done.append({"n": issue["number"], "msg": f"erreur : {str(e)[:300]}"})
-    save_recipes(recipes)
+    publish(recipes)
     DONE_FILE.write_text(json.dumps(done, ensure_ascii=False), encoding="utf-8")
     return 0
 
@@ -465,7 +500,7 @@ def close_issues() -> int:
     if not DONE_FILE.exists():
         return 0
     for d in json.loads(DONE_FILE.read_text(encoding="utf-8")):
-        gh("POST", f"/repos/{repo}/issues/{d['n']}/comments", json={"body": d["msg"]})
+        log(f"#{d['n']} : {d['msg']}")  # résumé dans le journal du robot (un commentaire enverrait un mail)
         gh("PATCH", f"/repos/{repo}/issues/{d['n']}", json={"state": "closed"})
     DONE_FILE.unlink()
     return 0
