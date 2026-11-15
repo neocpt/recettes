@@ -1056,6 +1056,154 @@
   "note": ""
  },
  {
+  "id": "ig_DZfh5gvqS4g",
+  "url": "https://www.instagram.com/reel/DZfh5gvqS4g/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Sandwich steak, pêche et pesto",
+  "auteur_video": "Holly Dingwall",
+  "temps_min": 15,
+  "type": "plat",
+  "portions": 1,
+  "ingredients": [
+   {
+    "nom": "Pain ciabatta",
+    "base": "pain ciabatta"
+   },
+   {
+    "nom": "Pesto",
+    "base": "pesto"
+   },
+   {
+    "nom": "Roquette",
+    "base": "roquette"
+   },
+   {
+    "nom": "Steak",
+    "base": "steak"
+   },
+   {
+    "nom": "Burrata",
+    "base": "burrata"
+   },
+   {
+    "nom": "Piment",
+    "base": "piment"
+   },
+   {
+    "nom": "Parmesan",
+    "base": "parmesan"
+   }
+  ],
+  "etapes": [
+   "Étaler le pesto sur le pain ciabatta",
+   "Ajouter la roquette",
+   "Disposer les morceaux de steak cuit",
+   "Ajouter la burrata déchirée",
+   "Saupoudrer de piment et râper du parmesan",
+   "Refermer le sandwich avec l'autre tranche de pain",
+   "Couper en deux et déguster"
+  ],
+  "image": "img/ig_DZfh5gvqS4g.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DYK-jkdO1JG",
+  "url": "https://www.instagram.com/reel/DYK-jkdO1JG/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Brioche au Nutella",
+  "auteur_video": "Isabel K",
+  "temps_min": 40,
+  "type": "goûter",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "pâte à brioche",
+    "base": "pâte à brioche"
+   },
+   {
+    "nom": "Nutella",
+    "base": "nutella"
+   },
+   {
+    "nom": "jaune d'œuf",
+    "base": "jaune d'œuf"
+   }
+  ],
+  "etapes": [
+   "Abaisser des boules de pâte à brioche en cercles.",
+   "Garnir chaque cercle de Nutella et refermer en demi-lune.",
+   "Découper des lanières sur le bord de chaque chausson et les enrouler sur elles-mêmes.",
+   "Disposer les brioches dans un plat allant au four.",
+   "Badigeonner de jaune d'œuf et faire cuire au four.",
+   "Badigeonner de nouveau à la sortie du four pour faire briller."
+  ],
+  "image": "img/ig_DYK-jkdO1JG.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DYwfYOyOMwl",
+  "url": "https://www.instagram.com/reel/DYwfYOyOMwl/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Salade de bœuf et avocat",
+  "auteur_video": "Isabel Marie",
+  "temps_min": 15,
+  "type": "plat",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "2 cups cilantro",
+    "base": "coriandre"
+   },
+   {
+    "nom": "1 english cucumber",
+    "base": "concombre"
+   },
+   {
+    "nom": "2 cups cherry tomatoes",
+    "base": "tomate cerise"
+   },
+   {
+    "nom": "2 avocados",
+    "base": "avocat"
+   },
+   {
+    "nom": "2 lbs grass fed sirloins",
+    "base": "faux-filet"
+   },
+   {
+    "nom": "light vinaigrette",
+    "base": "vinaigrette"
+   }
+  ],
+  "etapes": [
+   "Saisir le faux-filet de chaque côté pendant deux minutes à feu vif.",
+   "Mettre au four pendant 5 minutes à 400°F puis laisser reposer pendant 5 minutes.",
+   "Couper tous les autres ingrédients en dés et les placer dans un bol pendant que le steak cuit.",
+   "Ajouter le steak coupé en morceaux dans le bol.",
+   "Ajouter la vinaigrette et mélanger."
+  ],
+  "image": "img/ig_DYwfYOyOMwl.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DfvZSTmudWM",
   "url": "https://www.instagram.com/reel/DfvZSTmudWM/",
   "plateforme": "instagram",
