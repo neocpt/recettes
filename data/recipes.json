@@ -1,1 +1,63 @@
-[]
+[
+ {
+  "id": "ig_DfvZSTmudWM",
+  "url": "https://www.instagram.com/reel/DfvZSTmudWM/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T16:48:44Z",
+  "titre": "Pain à l'ail et au fromage gratiné",
+  "auteur_video": "Shaza Khatib, RD",
+  "temps_min": 25,
+  "type": "apéro",
+  "portions": 4,
+  "ingredients": [
+   {
+    "nom": "1 dizaine de gousses d'ail",
+    "base": "ail"
+   },
+   {
+    "nom": "Huile d'olive",
+    "base": "huile d'olive"
+   },
+   {
+    "nom": "100 g de beurre doux",
+    "base": "beurre"
+   },
+   {
+    "nom": "1 c. à café de paprika ou piment",
+    "base": "paprika"
+   },
+   {
+    "nom": "Sel et poivre",
+    "base": "sel"
+   },
+   {
+    "nom": "2 c. à soupe de persil frais haché",
+    "base": "persil"
+   },
+   {
+    "nom": "1 grand pain type ciabatta ou pain bâtard",
+    "base": "pain"
+   },
+   {
+    "nom": "200 g de mozzarella râpée",
+    "base": "mozzarella râpée"
+   }
+  ],
+  "etapes": [
+   "Faire confire et dorer les gousses d'ail à la poêle dans un fond généreux d'huile d'olive à feu moyen-doux.",
+   "Verser l'ail et l'huile chaude sur le beurre dans un récipient, puis ajouter les épices, le sel et le persil frais haché.",
+   "Écraser et mélanger le tout pour obtenir un beurre d'ail onctueux.",
+   "Couper le pain en deux dans le sens de la longueur et tartiner généreusement chaque moitié avec la préparation au beurre d'ail.",
+   "Recouvrir d'une couche généreuse de mozzarella râpée.",
+   "Enfourner à 200 °C jusqu'à ce que le fromage soit bien fondu et doré.",
+   "Parsemer d'un peu de persil frais, découper en tranches et servir chaud."
+  ],
+  "image": "img/ig_DfvZSTmudWM.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ }
+]
