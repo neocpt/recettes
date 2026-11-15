@@ -311,6 +311,32 @@ def extract(url: str, rid: str, key: str | None) -> dict:
         return fiche
 
 
+# ---------------------------------------------------------------- sauvegarde au fil de l'eau
+CHECKPOINT_EVERY = 3
+_added = 0
+
+
+def checkpoint(recipes: list[dict], force: bool = False) -> None:
+    """Sur GitHub Actions : publie les recettes déjà analysées sans attendre la fin d'un gros import."""
+    global _added
+    if not force:
+        _added += 1
+        if _added % CHECKPOINT_EVERY:
+            return
+    save_recipes(recipes)
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    import subprocess
+    run = lambda *c: subprocess.run(c, cwd=ROOT, capture_output=True, text=True)
+    run("git", "add", "data", *(["img"] if IMG_DIR.exists() else []))
+    if run("git", "diff", "--cached", "--quiet").returncode == 0:
+        return
+    run("git", "commit", "-m", "Recettes mises à jour (en cours)")
+    run("git", "pull", "--rebase")
+    r = run("git", "push")
+    log("   ✔ recettes publiées" if r.returncode == 0 else f"   push intermédiaire raté : {r.stderr[:200]}")
+
+
 # ---------------------------------------------------------------- commandes (issues)
 def parse_command(body: str) -> dict:
     body = (body or "").strip()
@@ -348,6 +374,7 @@ def apply_command(cmd: dict, recipes: list[dict], key: str | None, now: str) -> 
             recipes.append(rec)
             by_id[rid] = rec
             out.append(f"{'✅' if rec['statut'] == 'ok' else '⚠️'} {rec['titre']} {rec['note']}".strip())
+            checkpoint(recipes)
             time.sleep(4)  # ménage le quota gratuit de Gemini
     elif action == "modif":
         r = by_id.get(cmd.get("id"))

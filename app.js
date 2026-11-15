@@ -4,7 +4,7 @@
 const TYPES = ['plat', 'entrée', 'apéro', 'dessert', 'petit-déj', 'goûter', 'boisson', 'sauce', 'autre'];
 const TYPE_ICON = { plat: '🍲', 'entrée': '🥗', 'apéro': '🧀', dessert: '🍰', 'petit-déj': '🥞', 'goûter': '🍪', boisson: '🥤', sauce: '🫙', autre: '🍽️' };
 const MAX_MISSING = 2;
-const APP_VERSION = 7;
+const APP_VERSION = 8;
 
 const $ = (s) => document.querySelector(s);
 let recipes = [];
@@ -43,7 +43,7 @@ function baseOf(line) {
 }
 
 // ---------------------------------------------------------------- données
-async function loadData() {
+async function loadData(fromPoll = false) {
   const token = cleanToken(cfg().token);
   let data = null;
   // Avec un code d'accès, l'API GitHub donne la version la plus fraîche (le site met ~1 min à se mettre à jour).
@@ -64,7 +64,7 @@ async function loadData() {
   if (Array.isArray(data)) { recipes = data; store.set('cache', data); } else recipes = store.get('cache', []);
   fillSelects();
   render();
-  checkPending();
+  if (!fromPoll) checkPending();
 }
 
 async function checkPending() {
@@ -81,8 +81,10 @@ async function checkPending() {
     box.hidden = !pendingCount;
     box.textContent = `⏳ ${pendingCount} demande${pendingCount > 1 ? 's' : ''} en cours d'analyse (≈ 2 min)…`;
     clearTimeout(pollTimer);
-    if (pendingCount) pollTimer = setTimeout(checkPending, 20000);
-    else if (before) loadData(); // une analyse vient de finir : on recharge
+    if (pendingCount) {
+      if (before) loadData(true); // pendant un import, les recettes arrivent par paquets de 3
+      pollTimer = setTimeout(checkPending, 20000);
+    } else if (before) loadData(); // une analyse vient de finir : on recharge
   } catch { /* pas grave */ }
 }
 

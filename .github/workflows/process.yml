@@ -20,13 +20,17 @@ jobs:
     # seulement les demandes du propriétaire du dépôt (les autres sont ignorées)
     if: github.event_name != 'issues' || (startsWith(github.event.issue.title, '[recette]') && github.event.issue.user.login == github.repository_owner)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install --quiet --upgrade "yt-dlp[default,curl-cffi]" requests pillow
+      - name: Identité git (pour publier au fil de l'eau)
+        run: |
+          git config user.name "recettes-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Analyse
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,8 +38,6 @@ jobs:
         run: python scripts/process.py
       - name: Enregistre
         run: |
-          git config user.name "recettes-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data
           if [ -d img ]; then git add img; fi
           if ! git diff --cached --quiet; then
