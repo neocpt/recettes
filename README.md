@@ -32,13 +32,16 @@ Ce code permet aux téléphones d'ajouter des recettes. Il ne donne accès à ri
    - **Permissions → Repository permissions → Issues → Read and write**
 3. Clique sur **Generate token** et copie le code (`github_pat_…`). Garde-le pour vous deux, ne le publie nulle part.
 
-### 3. Android (Néo)
-1. Ouvre <https://neocpt.github.io/recettes/> dans **Chrome**.
-2. Menu ⋮ → **Installer l'appli** (ou **Ajouter à l'écran d'accueil**).
-3. Ouvre l'appli depuis l'écran d'accueil, puis ⚙️ → ton prénom + le code d'accès → Enregistrer.
-4. Pour ajouter une recette :
-   - Instagram : ➤ → **Partager vers…** → **Recettes**.
-   - TikTok : **Partager → Plus** → **Recettes**.
+### 3. Android
+**L'appli, pour chercher les recettes :** ouvre <https://neocpt.github.io/recettes/> dans **Chrome** → menu ⋮ → **Installer l'appli**. Ensuite ⚙️ → ton prénom + le code d'accès.
+
+**La mini-appli, pour ajouter des recettes sans quitter Instagram ou TikTok :**
+- Elle est dans `C:\dev\RecettesShare` (sur le PC). Pour l'installer : téléphone branché en USB, puis double-clic sur `run.bat`.
+- Dans « Recettes réglages » : ton prénom + le code → **Enregistrer et vérifier**.
+- Pour ajouter une recette, partage vers **« Ajouter aux recettes »** :
+  - Instagram : ➤ → **Partager vers…**
+  - TikTok : **Partager → Plus**
+- Un message « Recette ajoutée ✅ » s'affiche, et tu restes sur la vidéo.
 
 ### 4. iPhone (ta copine)
 L'iPhone ne laisse pas un site apparaître dans le menu Partager. On passe donc par un **Raccourci** (appli Raccourcis, déjà installée).
