@@ -4,6 +4,7 @@
 const TYPES = ['plat', 'entrée', 'apéro', 'dessert', 'petit-déj', 'goûter', 'boisson', 'sauce', 'autre'];
 const TYPE_ICON = { plat: '🍲', 'entrée': '🥗', 'apéro': '🧀', dessert: '🍰', 'petit-déj': '🥞', 'goûter': '🍪', boisson: '🥤', sauce: '🫙', autre: '🍽️' };
 const MAX_MISSING = 2;
+const APP_VERSION = 6;
 
 const $ = (s) => document.querySelector(s);
 let recipes = [];
@@ -274,6 +275,7 @@ function openSettings() {
   f.prenom.value = c.prenom;
   f.token.value = c.token;
   f.basiques.value = (c.basiques || DEFAULT_BASICS).join(', ');
+  $('#appVer').textContent = `Version ${APP_VERSION}`;
   $('#dlgSettings').showModal();
 }
 
