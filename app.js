@@ -4,7 +4,7 @@
 const TYPES = ['plat', 'entrée', 'apéro', 'dessert', 'petit-déj', 'goûter', 'boisson', 'sauce', 'autre'];
 const TYPE_ICON = { plat: '🍲', 'entrée': '🥗', 'apéro': '🧀', dessert: '🍰', 'petit-déj': '🥞', 'goûter': '🍪', boisson: '🥤', sauce: '🫙', autre: '🍽️' };
 const MAX_MISSING = 2;
-const APP_VERSION = 8;
+const APP_VERSION = 9;
 
 const $ = (s) => document.querySelector(s);
 let recipes = [];
@@ -62,7 +62,7 @@ async function loadData(fromPoll = false) {
     } catch { /* hors ligne */ }
   }
   if (Array.isArray(data)) { recipes = data; store.set('cache', data); } else recipes = store.get('cache', []);
-  fillSelects();
+  renderFilters();
   render();
   if (!fromPoll) checkPending();
 }
@@ -79,7 +79,7 @@ async function checkPending() {
     pendingCount = open.length;
     const box = $('#pending');
     box.hidden = !pendingCount;
-    box.textContent = `⏳ ${pendingCount} demande${pendingCount > 1 ? 's' : ''} en cours d'analyse (≈ 2 min)…`;
+    box.textContent = `Analyse de ${pendingCount > 1 ? `${pendingCount} demandes` : 'ta recette'} en cours… (≈ 2 min)`;
     clearTimeout(pollTimer);
     if (pendingCount) {
       if (before) loadData(true); // pendant un import, les recettes arrivent par paquets de 3
@@ -92,67 +92,83 @@ async function checkPending() {
 function people() {
   return [...new Set(recipes.flatMap((r) => r.par || []))].sort((a, b) => a.localeCompare(b, 'fr'));
 }
+const personColor = (p) => `var(--p${Math.max(0, people().indexOf(p)) % 4})`;
 function whoHtml(r) {
-  const all = people();
-  return (r.par || []).map((p) => `<span class="who"><i class="dot" style="background:var(--p${all.indexOf(p) % 4})"></i>${esc(p)}</span>`).join(' ');
+  return (r.par || []).map((p) => `<span class="who"><i style="background:${personColor(p)}"></i>${esc(p)}</span>`).join(' ');
 }
 
-// ---------------------------------------------------------------- affichage
-function fillSelects() {
-  const fType = $('#fType');
-  const fQui = $('#fQui');
-  const keepT = fType.value;
-  const keepQ = fQui.value;
+// ---------------------------------------------------------------- filtres
+const TYPE_LABEL = { plat: 'Plats', 'entrée': 'Entrées', 'apéro': 'Apéros', dessert: 'Desserts', 'petit-déj': 'Petit-déj', 'goûter': 'Goûters', boisson: 'Boissons', sauce: 'Sauces', autre: 'Autres' };
+const TIMES = [[0, 'Tout temps'], [15, '≤ 15 min'], [30, '≤ 30 min'], [45, '≤ 45 min'], [60, '≤ 1 h']];
+let fType = '';
+let fQui = '';
+const fmtTime = (m) => (m < 60 ? `${m} min` : `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60}` : ''}`);
+const pill = (k, v, label, on, extra = '') => `<button class="pill${on ? ' on' : ''}${extra}" data-k="${k}" data-v="${esc(v)}">${label}</button>`;
+
+function renderFilters() {
   const used = TYPES.filter((t) => recipes.some((r) => r.type === t));
-  fType.innerHTML = '<option value="">Tous les types</option>' + used.map((t) => `<option value="${esc(t)}">${TYPE_ICON[t] || ''} ${esc(t)}</option>`).join('');
-  fQui.innerHTML = '<option value="">De nous deux</option>' + people().map((p) => `<option value="${esc(p)}">Ajoutées par ${esc(p)}</option>`).join('');
-  fType.value = used.includes(keepT) ? keepT : '';
-  fQui.value = people().includes(keepQ) ? keepQ : '';
+  if (fType && !used.includes(fType)) fType = '';
+  if (fQui && !people().includes(fQui)) fQui = '';
+  $('#fType').innerHTML = pill('type', '', '✨ Tout', !fType)
+    + used.map((t) => pill('type', t, `${TYPE_ICON[t] || ''} ${TYPE_LABEL[t] || t}`, fType === t)).join('');
+  const who = people();
+  $('#fMore').innerHTML = TIMES.map(([v, l]) => pill('time', v, v ? l : `⏱ ${l}`, tempsMax === v)).join('')
+    + (who.length > 1 ? '<span class="sep"></span>' + pill('qui', '', '👫 Nous deux', !fQui)
+      + who.map((p) => `<button class="pill person${fQui === p ? ' on' : ''}" style="--pc:${personColor(p)}" data-k="qui" data-v="${esc(p)}">${esc(p)}</button>`).join('') : '');
   const bases = [...new Set(recipes.flatMap((r) => (r.ingredients || []).map((i) => (i.base || '').trim().toLowerCase())).filter(Boolean))].sort();
   $('#ingList').innerHTML = bases.map((b) => `<option value="${esc(b)}">`).join('');
-  $('#count').textContent = recipes.length ? `· ${recipes.length}` : '';
+  const { prenom } = cfg();
+  $('#hello').textContent = `Salut${prenom ? ` ${prenom}` : ''} 👋`;
 }
 
 function filtered() {
-  const t = $('#fType').value;
-  const q = $('#fQui').value;
-  return recipes.filter((r) => (!t || r.type === t) && (!q || (r.par || []).includes(q))
+  return recipes.filter((r) => (!fType || r.type === fType) && (!fQui || (r.par || []).includes(fQui))
     && (!tempsMax || (r.temps_min != null && r.temps_min <= tempsMax)));
 }
 
-function card(r, s) {
-  const img = r.image
-    ? `<img class="thumb" src="${esc(r.image)}" alt="" loading="lazy" onerror="if(this.dataset.f){this.outerHTML='<div class=&quot;thumb&quot;>${TYPE_ICON[r.type] || '🍽️'}</div>'}else{this.dataset.f=1;this.src='https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/${esc(r.image)}'}">`
-    : `<div class="thumb">${TYPE_ICON[r.type] || '🍽️'}</div>`;
-  let line = '';
-  if (s && mine.length) {
-    line = s.missing.length
-      ? `<div class="missing">Il manque : ${esc(s.missing.join(', '))}</div>`
-      : '<div class="okline">✓ Tu as tout</div>';
-  }
-  const badge = r.statut !== 'ok' ? '<span class="badge">à compléter</span>' : '';
-  return `<button class="card" data-id="${esc(r.id)}">${img}<div class="info">
-    <div class="t">${esc(r.titre)}</div>
-    <div class="meta">${r.temps_min ? `<span>⏱ ${r.temps_min} min</span>` : ''}<span>${TYPE_ICON[r.type] || ''} ${esc(r.type || '')}</span>${whoHtml(r)}${badge}</div>
-    ${line}</div></button>`;
+// ---------------------------------------------------------------- affichage
+function media(r, cls = '') {
+  const icon = TYPE_ICON[r.type] || '🍽️';
+  if (!r.image) return `<div class="ph ${cls}">${icon}</div>`;
+  const raw = `https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/main/${esc(r.image)}`;
+  return `<img src="${esc(r.image)}" alt="" loading="lazy" onerror="if(this.dataset.f){this.outerHTML='<div class=&quot;ph&quot;>${icon}</div>'}else{this.dataset.f=1;this.src='${raw}'}">`;
 }
+
+function tile(r, s) {
+  let badge = '';
+  if (r.statut !== 'ok') badge = '<span class="t-badge todo">À compléter</span>';
+  else if (s && mine.length) {
+    badge = s.missing.length
+      ? `<span class="t-badge miss">Manque : ${esc(s.missing.join(', '))}</span>`
+      : '<span class="t-badge ok">✓ Tu as tout</span>';
+  }
+  const who = (r.par || []).map((p) => `<i style="background:${personColor(p)}" title="${esc(p)}">${esc((p[0] || '?').toUpperCase())}</i>`).join('');
+  return `<button class="tile" data-id="${esc(r.id)}">${media(r)}
+    <div class="t-top">${r.temps_min ? `<span class="t-time">⏱ ${fmtTime(r.temps_min)}</span>` : '<span></span>'}<span class="t-who">${who}</span></div>
+    <div class="t-cap">${badge}<h3>${esc(r.titre)}</h3><span class="t-tag">${TYPE_ICON[r.type] || ''} ${esc(TYPE_LABEL[r.type] ? r.type : 'autre')}</span></div>
+  </button>`;
+}
+
+const section = (title, items, sub = '') => `<div class="section-title"><h2>${title}</h2><span>${sub}</span></div><div class="grid">${items}</div>`;
+const emptyBox = (icon, title, text) => `<div class="empty"><b>${icon}</b><p><strong>${title}</strong></p><p>${text}</p></div>`;
 
 function render() {
   const out = $('#results');
   const list = filtered();
-  $('#chips').innerHTML = mine.map((m, i) => `<button class="chip" data-i="${i}" aria-label="Retirer ${esc(m)}">${esc(m)}<span>×</span></button>`).join('');
+  $('#chips').innerHTML = mine.map((m, i) => `<button class="chip" data-i="${i}" aria-label="Retirer ${esc(m)}">${esc(m)}<span>✕</span></button>`).join('');
+  $('#ingInput').placeholder = mine.length ? 'Autre ingrédient…' : "Ce que j'ai dans le frigo…";
 
   if (!recipes.length) {
     lastShown = [];
-    out.innerHTML = `<div class="empty">Aucune recette pour l'instant.<br>Partage une vidéo depuis Instagram ou TikTok vers « Recettes » 🙂</div>`;
+    out.innerHTML = emptyBox('🥘', 'Le carnet est vide', 'Partage une vidéo Instagram ou TikTok vers « Ajouter aux recettes ».');
     return;
   }
   if (!mine.length) {
     lastShown = list.filter((r) => r.statut === 'ok');
     const todo = list.filter((r) => r.statut !== 'ok');
-    out.innerHTML = (list.length ? '' : '<div class="empty">Aucune recette avec ces filtres.</div>')
-      + (lastShown.length ? `<h2 class="section">Toutes nos recettes <small>${lastShown.length}</small></h2>${lastShown.map((r) => card(r)).join('')}` : '')
-      + (todo.length ? `<h2 class="section">À compléter <small>${todo.length}</small></h2>${todo.map((r) => card(r)).join('')}` : '');
+    out.innerHTML = (list.length ? '' : emptyBox('🔍', 'Aucune recette', 'Rien ne correspond à ces filtres.'))
+      + (lastShown.length ? section(fType ? TYPE_LABEL[fType] || 'Nos recettes' : 'Nos recettes', lastShown.map((r) => tile(r)).join(''), `${lastShown.length}`) : '')
+      + (todo.length ? section('À compléter', todo.map((r) => tile(r)).join(''), `${todo.length}`) : '');
     return;
   }
   const mineKeys = mine.map(keyOf);
@@ -163,13 +179,13 @@ function render() {
     .sort((a, b) => a.s.missing.length - b.s.missing.length || b.s.have.length - a.s.have.length);
   lastShown = scored.map((x) => x.r);
   if (!scored.length) {
-    out.innerHTML = `<div class="empty">Rien de faisable avec ça (même en acceptant ${MAX_MISSING} ingrédients manquants).</div>`;
+    out.innerHTML = emptyBox('🤷', 'Rien de faisable', `Même en acceptant ${MAX_MISSING} ingrédients manquants. Essaie avec autre chose !`);
     return;
   }
-  const titles = ['Tu peux le faire', 'Il manque 1 ingrédient', 'Il manque 2 ingrédients'];
-  out.innerHTML = [0, 1, 2].map((n) => {
+  const titles = ['Tu peux le faire 🎉', 'Il manque 1 ingrédient', 'Il manque 2 ingrédients'];
+  out.innerHTML = '<p class="basics-note">Sel, poivre, huile & co. ne comptent pas.</p>' + [0, 1, 2].map((n) => {
     const g = scored.filter((x) => x.s.missing.length === n);
-    return g.length ? `<h2 class="section">${titles[n]} <small>${g.length}</small></h2>${g.map((x) => card(x.r, x.s)).join('')}` : '';
+    return g.length ? section(titles[n], g.map((x) => tile(x.r, x.s)).join(''), `${g.length}`) : '';
   }).join('');
 }
 
@@ -179,30 +195,39 @@ function openRecipe(id) {
   if (!r) return;
   const mineKeys = mine.map(keyOf);
   const basics = basicKeys();
+  let have = 0;
+  let needed = 0;
   const ings = (r.ingredients || []).map((i) => {
     const k = keyOf(i.base || i.nom);
     let cls = '';
-    let mk = '•';
+    let mk = '';
     if (isBasic(k, basics)) cls = 'basic';
-    else if (mine.length && mineKeys.some((m) => matches(m, k))) { cls = 'have'; mk = '✓'; } else if (mine.length) { cls = 'miss'; mk = '✗'; }
+    else if (mine.length) {
+      needed += 1;
+      if (mineKeys.some((m) => matches(m, k))) { cls = 'have'; mk = '✓'; have += 1; } else cls = 'miss';
+    }
     return `<li class="${cls}"><span class="mk">${mk}</span><span>${esc(i.nom)}</span></li>`;
   }).join('');
-  const steps = (r.etapes || []).map((e) => `<li>${esc(e)}</li>`).join('');
-  const hero = r.image
-    ? `<div class="r-hero"><img src="${esc(r.image)}" alt="" onerror="this.parentNode.remove()"><button class="r-close" data-close aria-label="Fermer">✕</button></div>`
-    : '<button class="r-close static" data-close aria-label="Fermer">✕</button>';
-  $('#recipeBody').innerHTML = `${hero}
-    <h2>${esc(r.titre)}</h2>
-    <div class="meta">${r.temps_min ? `<span>⏱ ${r.temps_min} min</span>` : ''}${r.portions ? `<span>👥 ${r.portions} pers.</span>` : ''}<span>${TYPE_ICON[r.type] || ''} ${esc(r.type)}</span><span>ajoutée par ${whoHtml(r)}</span></div>
-    <a class="video-link" href="${esc(r.url)}" target="_blank" rel="noopener">▶ Voir la vidéo${r.auteur_video ? ` de ${esc(r.auteur_video)}` : ''} ↗</a>
-    ${r.note ? `<div class="note">${esc(r.note)}</div>` : ''}
-    <h3>Ingrédients</h3>${ings ? `<ul class="ings">${ings}</ul>` : '<p class="small">Aucun ingrédient enregistré.</p>'}
-    <h3>Étapes</h3>${steps ? `<ol class="steps">${steps}</ol>` : '<p class="small">Pas d\'étapes : regarde la vidéo.</p>'}
-    <div class="r-actions">
-      <button class="ghost" data-act="edit">✏️ Modifier</button>
-      <button class="ghost" data-act="retry">🔄 Réanalyser</button>
-      <button class="danger" data-act="del">🗑 Supprimer</button>
-    </div>`;
+  const steps = (r.etapes || []).map((e) => `<li><span>${esc(e)}</span></li>`).join('');
+  const meta = [r.temps_min ? `⏱ ${fmtTime(r.temps_min)}` : '', r.portions ? `👥 ${r.portions} pers.` : '', `${TYPE_ICON[r.type] || '🍽️'} ${esc(r.type || 'autre')}`]
+    .filter(Boolean).map((m) => `<span>${m}</span>`).join('');
+  $('#recipeBody').innerHTML = `
+    <div class="d-hero">${media(r)}<button class="d-back" data-close aria-label="Retour">←</button></div>
+    <div class="d-body">
+      <h2>${esc(r.titre)}</h2>
+      <div class="d-meta">${meta}</div>
+      <div class="d-by">Ajoutée par ${whoHtml(r)}${r.auteur_video ? ` · vidéo de ${esc(r.auteur_video)}` : ''}</div>
+      ${r.note ? `<div class="note">${esc(r.note)}</div>` : ''}
+      <section class="d-card"><h3>Ingrédients <small>${mine.length && needed ? `${have}/${needed} dans ton frigo` : `${(r.ingredients || []).length}`}</small></h3>
+        ${ings ? `<ul class="ings">${ings}</ul>` : '<p class="small">Aucun ingrédient enregistré : regarde la vidéo.</p>'}</section>
+      <section class="d-card"><h3>Étapes</h3>${steps ? `<ol class="steps">${steps}</ol>` : '<p class="small">Pas d\'étapes : regarde la vidéo.</p>'}</section>
+      <div class="d-tools">
+        <button class="ghost" data-act="edit">✏️ Modifier</button>
+        <button class="ghost" data-act="retry">🔄 Réanalyser</button>
+        <button class="danger" data-act="del">🗑 Supprimer</button>
+      </div>
+    </div>
+    <div class="d-bar"><a href="${esc(r.url)}" target="_blank" rel="noopener">▶ Voir la vidéo</a></div>`;
   $('#recipeBody').dataset.id = id;
   const d = $('#dlgRecipe');
   if (!d.open) d.showModal();
@@ -224,7 +249,7 @@ async function recipeAction(act) {
       await sendCommand(`suppression ${r.titre}`, JSON.stringify({ action: 'suppr', id }));
       recipes = recipes.filter((x) => x !== r);
       $('#dlgRecipe').close();
-      fillSelects();
+      renderFilters();
       render();
       toast('Recette supprimée');
     }
@@ -262,7 +287,7 @@ async function saveEdit(e) {
     await sendCommand(`modif ${data.titre}`, JSON.stringify({ action: 'modif', id: r.id, data }));
     Object.assign(r, data, { statut: 'ok', note: '' });
     $('#dlgEdit').close();
-    fillSelects();
+    renderFilters();
     render();
     openRecipe(r.id);
     toast('Modifications envoyées ✓');
@@ -500,24 +525,31 @@ $('#chips').addEventListener('click', (e) => {
   store.set('mesIngredients', mine);
   render();
 });
-$('#fTemps').addEventListener('click', (e) => {
-  const b = e.target.closest('button');
+document.querySelector('.filters').addEventListener('click', (e) => {
+  const b = e.target.closest('.pill');
   if (!b) return;
-  tempsMax = +b.dataset.v;
-  $('#fTemps').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+  const { k, v } = b.dataset;
+  if (k === 'type') fType = v;
+  if (k === 'time') tempsMax = +v;
+  if (k === 'qui') fQui = v;
+  renderFilters();
   render();
 });
-$('#fType').addEventListener('change', render);
-$('#fQui').addEventListener('change', render);
 $('#btnRandom').addEventListener('click', () => {
   const pool = lastShown.length ? lastShown : filtered().filter((r) => r.statut === 'ok');
   if (!pool.length) { toast('Aucune recette à tirer avec ces filtres'); return; }
   openRecipe(pool[Math.floor(Math.random() * pool.length)].id);
 });
-$('#results').addEventListener('click', (e) => { const c = e.target.closest('.card'); if (c) openRecipe(c.dataset.id); });
+$('#results').addEventListener('click', (e) => { const c = e.target.closest('.tile'); if (c) openRecipe(c.dataset.id); });
 $('#recipeBody').addEventListener('click', (e) => {
   const a = e.target.closest('[data-act]');
-  if (a) recipeAction(a.dataset.act);
+  if (a) { recipeAction(a.dataset.act); return; }
+  const li = e.target.closest('.ings li');
+  if (li) { // case à cocher pendant qu'on cuisine
+    li.classList.toggle('done');
+    const mk = li.querySelector('.mk');
+    if (!li.classList.contains('have')) mk.textContent = li.classList.contains('done') ? '✓' : '';
+  }
 });
 document.querySelectorAll('dialog').forEach((d) => {
   d.addEventListener('click', (e) => { if (e.target.closest('[data-close]') || e.target === d) d.close(); });
