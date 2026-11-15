@@ -20,13 +20,28 @@ const store = {
 const cfg = () => ({ prenom: '', token: '', basiques: DEFAULT_BASICS, ...store.get('cfg', {}) });
 const saveCfg = (patch) => store.set('cfg', { ...cfg(), ...patch });
 
+// Nettoie un code collé (espaces, retours à la ligne, « Bearer » en trop).
+const cleanToken = (t) => String(t || '').replace(/^\s*bearer\s+/i, '').replace(/\s+/g, '');
+
+// Vérifie le code d'accès auprès de GitHub et renvoie un message lisible.
+async function checkToken(token) {
+  if (!/^(github_pat_|ghp_)/.test(token)) return "✗ Le code doit commencer par github_pat_ : copie-le en entier";
+  try {
+    const r = await fetch(`${API}/issues?per_page=1`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+    if (r.ok) return "✓ Code d'accès valide";
+    if (r.status === 401) return "✗ Code refusé par GitHub : il est incomplet ou mal copié";
+    if (r.status === 403 || r.status === 404) return "✗ Ce code n'a pas accès au dépôt recettes";
+    return `✗ GitHub a répondu ${r.status}`;
+  } catch { return '✗ Pas de connexion internet'; }
+}
+
 // ---- liens vidéo
 const VIDEO_RE = /https?:\/\/(?:www\.|m\.)?(?:instagram\.com\/(?:[\w.]+\/)?(?:p|reels?|tv)\/[\w-]+|tiktokv?\.com\/[^\s"'<>]*?(?:video|share\/video)\/\d+|(?:vm|vt)\.tiktok\.com\/[\w-]+|tiktok\.com\/t\/[\w-]+)[^\s"'<>]*/gi;
 const findVideoUrls = (text) => [...new Set((String(text || '').match(VIDEO_RE) || []).map((u) => u.replace(/[).,;]+$/, '')))];
 
 // ---- envoi d'une demande (= une issue GitHub, traitée automatiquement par le robot)
 async function sendCommand(title, body) {
-  const { token } = cfg();
+  const token = cleanToken(cfg().token);
   if (!token) throw new Error("Ajoute d'abord ton code d'accès dans les réglages ⚙️");
   const r = await fetch(`${API}/issues`, {
     method: 'POST',

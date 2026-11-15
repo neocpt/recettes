@@ -277,17 +277,19 @@ function openSettings() {
   $('#dlgSettings').showModal();
 }
 
-function saveSettings(e) {
+async function saveSettings(e) {
   e.preventDefault();
   const f = e.target;
+  const token = cleanToken(f.token.value);
   saveCfg({
     prenom: f.prenom.value.trim(),
-    token: f.token.value.trim(),
+    token,
     basiques: f.basiques.value.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
   });
   $('#dlgSettings').close();
   render();
-  toast('Réglages enregistrés');
+  toast(token ? 'Vérification du code…' : 'Réglages enregistrés');
+  if (token) toast(await checkToken(token));
   loadData();
 }
 
