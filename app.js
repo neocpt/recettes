@@ -299,6 +299,8 @@ const groupLabel = (fileName) => (/saved_collections/i.test(fileName) ? 'Instagr
     : /liked_posts|likes/i.test(fileName) ? 'Instagram · publications aimées'
       : fileName.split('/').pop());
 const NAME_LABEL = /^(name|nom)$/i;
+// Instagram encode mal les accents dans ses exports (« RÃ©sultat ») : on les répare.
+const fixText = (s) => { try { return decodeURIComponent(escape(s)); } catch { return s; } };
 
 function scanExport(root, fileName, groups) {
   let current = groupLabel(fileName);
@@ -309,11 +311,12 @@ function scanExport(root, fileName, groups) {
     if (!n || typeof n !== 'object') return;
     // en-tête de collection : un nom, mais aucun lien vidéo (ancien format string_map_data, nouveau label_values)
     const smd = n.string_map_data;
-    const lv = Array.isArray(n.label_values) ? n.label_values.find((l) => NAME_LABEL.test(l.label || '')) : null;
+    const lv = Array.isArray(n.label_values) ? n.label_values.find((l) => NAME_LABEL.test(fixText(l.label || ''))) : null;
     const name = smd?.Name?.value ?? smd?.Nom?.value ?? lv?.value;
-    if ((n.title === 'Collection' || name != null) && !findVideoUrls(JSON.stringify(n)).length && /saved_collections/i.test(fileName)) {
-      current = `Collection « ${name || '?'} »`;
-      return;
+    if (/saved_collections/i.test(fileName) && (n.title === 'Collection' || name != null)) {
+      current = `Collection « ${fixText(name || '?').trim()} »`;
+      // ancien format : en-tête seul, les vidéos suivent ; nouveau format : les vidéos sont dedans
+      if (!findVideoUrls(JSON.stringify(n)).length) return;
     }
     for (const [k, v] of Object.entries(n)) {
       const prev = current;
