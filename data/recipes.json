@@ -777,6 +777,151 @@
   "note": ""
  },
  {
+  "id": "ig_DblZ1EWsPYP",
+  "url": "https://www.instagram.com/reel/DblZ1EWsPYP/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Rouleaux de pain à l'ail et au fromage",
+  "auteur_video": "Miss Rolls | Cinnamon Rolls",
+  "temps_min": 45,
+  "type": "plat",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "pâte à pain",
+    "base": "pâte à pain"
+   },
+   {
+    "nom": "beurre",
+    "base": "beurre"
+   },
+   {
+    "nom": "ail",
+    "base": "ail"
+   },
+   {
+    "nom": "persil",
+    "base": "persil"
+   },
+   {
+    "nom": "fromage râpé",
+    "base": "fromage"
+   },
+   {
+    "nom": "crème",
+    "base": "crème"
+   },
+   {
+    "nom": "huile d'olive",
+    "base": "huile d'olive"
+   }
+  ],
+  "etapes": [
+   "Étaler la pâte à pain sur un plan de travail fariné.",
+   "Badigeonner la pâte avec un mélange de beurre, d'ail et de persil.",
+   "Ajouter le fromage râpé sur toute la surface.",
+   "Couper la pâte en bandes et rouler chaque bande pour former des rouleaux.",
+   "Disposer les rouleaux dans un plat allant au four chemisé de papier sulfurisé.",
+   "Verser un peu de crème sur les rouleaux.",
+   "Faire cuire au four jusqu'à ce qu'ils soient dorés.",
+   "Badigeonner à nouveau d'un mélange d'huile d'olive, d'ail et de persil avant de servir."
+  ],
+  "image": "img/ig_DblZ1EWsPYP.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DbmzQbFAI1Y",
+  "url": "https://www.instagram.com/reel/DbmzQbFAI1Y/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Bonbons pêche Sprite glacés",
+  "auteur_video": "Juliette Moreno",
+  "temps_min": null,
+  "type": "dessert",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "bonbons pêche",
+    "base": "bonbon"
+   },
+   {
+    "nom": "Sprite",
+    "base": "sprite"
+   }
+  ],
+  "etapes": [
+   "Placer les bonbons pêche dans un bol.",
+   "Verser du Sprite par-dessus.",
+   "Mettre au congélateur jusqu'à congélation."
+  ],
+  "image": "img/ig_DbmzQbFAI1Y.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DbQ5I1tNtDW",
+  "url": "https://www.instagram.com/reel/DbQ5I1tNtDW/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Salade de mangue au saumon et thon",
+  "auteur_video": "Samantha Puleo",
+  "temps_min": 15,
+  "type": "entrée",
+  "portions": 2,
+  "ingredients": [
+   {
+    "nom": "1 mango maturo",
+    "base": "mangue"
+   },
+   {
+    "nom": "1/2 avocado maturo",
+    "base": "avocat"
+   },
+   {
+    "nom": "100g di tartare di salmone",
+    "base": "tartare de saumon"
+   },
+   {
+    "nom": "100g di tartare di tonno",
+    "base": "tartare de thon"
+   },
+   {
+    "nom": "Succo di lime q.b.",
+    "base": "citron vert"
+   },
+   {
+    "nom": "Salsa di soia q.b.",
+    "base": "sauce soja"
+   },
+   {
+    "nom": "1 cucchiaino di mayonese",
+    "base": "mayonnaise"
+   }
+  ],
+  "etapes": [
+   "Couper la mangue et l'avocat en très petits dés.",
+   "Dans un bol, ajouter la mangue, l'avocat, le tartare de saumon et le tartare de thon.",
+   "Assaisonner le tout avec le jus de citron vert, la sauce soja et la mayonnaise, puis mélanger délicatement.",
+   "Servir à l'intérieur de la coque de mangue et décorer avec des graines de sésame."
+  ],
+  "image": "img/ig_DbQ5I1tNtDW.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DfvZSTmudWM",
   "url": "https://www.instagram.com/reel/DfvZSTmudWM/",
   "plateforme": "instagram",
