@@ -73,7 +73,7 @@ Instagram ne laisse aucune appli lire tes enregistrements. En revanche, il perme
 
 1. Instagram → Profil → ☰ → **Espace Comptes** → **Vos informations et autorisations** → **Télécharger vos informations**. Les noms de menus peuvent varier un peu.
 2. **Télécharger ou transférer des informations** → ton compte → **Certaines de vos informations** → coche **Enregistrées**.
-3. **Télécharger sur l'appareil** → Période : **Depuis le début** → Format : **JSON** → Qualité : basse → **Créer les fichiers**.
+3. **Télécharger sur l'appareil** → Période : **Depuis le début** → Format : **JSON** (HTML marche aussi) → Qualité : basse → **Créer les fichiers**.
 4. Instagram envoie un e-mail quand le fichier est prêt (de quelques minutes à quelques heures). Télécharge le `.zip`.
 5. Dans l'appli : ⚙️ → **Importer d'un coup** → choisis le `.zip` → coche la collection « recette » → **Importer**.
 

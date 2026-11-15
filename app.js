@@ -293,22 +293,26 @@ async function saveSettings(e) {
   loadData();
 }
 
-// Parcourt un export Instagram/TikTok et regroupe les liens vidéo par collection.
+// Parcourt un export Instagram/TikTok (JSON ou HTML) et regroupe les liens vidéo par collection.
+const groupLabel = (fileName) => (/saved_collections/i.test(fileName) ? 'Instagram · sans collection'
+  : /saved_posts/i.test(fileName) ? 'Instagram · tous les enregistrements'
+    : /liked_posts|likes/i.test(fileName) ? 'Instagram · publications aimées'
+      : fileName.split('/').pop());
+const NAME_LABEL = /^(name|nom)$/i;
+
 function scanExport(root, fileName, groups) {
-  const base = /saved_collections/i.test(fileName) ? 'Instagram · sans collection'
-    : /saved_posts/i.test(fileName) ? 'Instagram · tous les enregistrements'
-      : /liked_posts|likes/i.test(fileName) ? 'Instagram · publications aimées'
-        : fileName.split('/').pop();
-  let current = base;
+  let current = groupLabel(fileName);
   const add = (u) => { if (!groups.has(current)) groups.set(current, new Set()); groups.get(current).add(u); };
   (function walk(n) {
     if (Array.isArray(n)) { n.forEach(walk); return; }
     if (typeof n === 'string') { findVideoUrls(n).forEach(add); return; }
     if (!n || typeof n !== 'object') return;
+    // en-tête de collection : un nom, mais aucun lien vidéo (ancien format string_map_data, nouveau label_values)
     const smd = n.string_map_data;
-    const name = smd?.Name || smd?.Nom;
-    if (n.title === 'Collection' || (name && !name.href && !findVideoUrls(JSON.stringify(n)).length)) {
-      current = `Collection « ${name?.value || '?'} »`;
+    const lv = Array.isArray(n.label_values) ? n.label_values.find((l) => NAME_LABEL.test(l.label || '')) : null;
+    const name = smd?.Name?.value ?? smd?.Nom?.value ?? lv?.value;
+    if ((n.title === 'Collection' || name != null) && !findVideoUrls(JSON.stringify(n)).length && /saved_collections/i.test(fileName)) {
+      current = `Collection « ${name || '?'} »`;
       return;
     }
     for (const [k, v] of Object.entries(n)) {
@@ -321,28 +325,59 @@ function scanExport(root, fileName, groups) {
   }(root));
 }
 
+// Version HTML (format par défaut d'Instagram) : chaque entrée est un bloc ; un bloc sans lien = nom de collection.
+function scanHtml(html, fileName, groups) {
+  let current = groupLabel(fileName);
+  const add = (u) => { if (!groups.has(current)) groups.set(current, new Set()); groups.get(current).add(u); };
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const sel = 'div.uiBoxWhite, div._a6-g';
+  const blocks = [...doc.querySelectorAll(sel)].filter((b) => !b.parentElement?.closest(sel));
+  const urlsOf = (el) => [...new Set([...el.querySelectorAll('a[href]')].flatMap((a) => findVideoUrls(a.getAttribute('href')))
+    .concat(findVideoUrls(el.textContent)))];
+  if (!blocks.length) { urlsOf(doc).forEach(add); return; }
+  for (const b of blocks) {
+    const urls = urlsOf(b);
+    if (urls.length) { urls.forEach(add); continue; }
+    if (!/saved_collections/i.test(fileName)) continue;
+    const texts = [];
+    const w = doc.createTreeWalker(b, NodeFilter.SHOW_TEXT);
+    while (w.nextNode()) { const t = w.currentNode.textContent.trim(); if (t) texts.push(t); }
+    const i = texts.findIndex((t) => NAME_LABEL.test(t.replace(/\s*:$/, '')));
+    const name = i >= 0 ? texts[i + 1] : texts.find((t) => !/^(collection|name|nom|creation time|update time|date)/i.test(t) && !/\d{4}|\d{1,2}:\d{2}/.test(t));
+    if (name) current = `Collection « ${name} »`;
+  }
+}
+
 async function importFile(file) {
   const box = $('#importResult');
   box.innerHTML = '<p class="small">Lecture du fichier…</p>';
   const groups = new Map();
+  let names = [];
+  const scanText = (text, name) => {
+    if (/\.json$/i.test(name)) { try { scanExport(JSON.parse(text), name, groups); } catch { /* JSON illisible */ } } else scanHtml(text, name, groups);
+  };
   try {
     if (/\.zip$/i.test(file.name) || file.type.includes('zip')) {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
       const zip = await window.JSZip.loadAsync(file);
-      const files = Object.values(zip.files).filter((f) => !f.dir && /\.json$/i.test(f.name)
-        && /saved|liked|favorite|user_data|likes/i.test(f.name));
-      for (const f of files) {
-        try { scanExport(JSON.parse(await f.async('string')), f.name, groups); } catch { /* fichier illisible : ignoré */ }
-      }
+      const all = Object.values(zip.files).filter((f) => !f.dir && /\.(json|html?)$/i.test(f.name));
+      names = all.map((f) => f.name);
+      let files = all.filter((f) => /saved|liked|favorite|user_data|likes/i.test(f.name));
+      if (!files.length) files = all;
+      for (const f of files) scanText(await f.async('string'), f.name);
     } else {
-      scanExport(JSON.parse(await file.text()), file.name, groups);
+      names = [file.name];
+      scanText(await file.text(), file.name);
     }
   } catch (e) {
-    box.innerHTML = `<p class="small">Fichier illisible (${esc(e.message)}). Choisis le format JSON lors de l'export.</p>`;
+    box.innerHTML = `<p class="small">Fichier illisible (${esc(e.message)}).</p>`;
     return;
   }
   const known = new Set(recipes.map((r) => r.url));
-  if (!groups.size) { box.innerHTML = '<p class="small">Aucun lien Instagram/TikTok trouvé dans ce fichier.</p>'; return; }
+  if (!groups.size) {
+    box.innerHTML = `<p class="small">Aucun lien Instagram/TikTok trouvé. Fichiers lus (${names.length}) :</p><p class="small">${names.slice(0, 15).map(esc).join('<br>') || '(aucun fichier .json ou .html)'}</p><p class="small">Fais une capture de ce message pour Claude.</p>`;
+    return;
+  }
   const entries = [...groups.entries()];
   box.innerHTML = `<p class="small">Coche ce que tu veux importer :</p><div class="groups">${entries.map(([g, s], i) => `<label><input type="checkbox" data-i="${i}" ${/recet/i.test(g) ? 'checked' : ''}> ${esc(g)} <small>(${s.size})</small></label>`).join('')}</div><button id="btnDoImport" class="primary">Importer</button>`;
   $('#btnDoImport').onclick = async () => {
