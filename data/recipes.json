@@ -1,1 +1,42 @@
-[]
+[
+ {
+  "id": "ig_DfusbLigDP6",
+  "url": "https://www.instagram.com/reel/DfusbLigDP6/",
+  "plateforme": "instagram",
+  "par": [
+   "Test"
+  ],
+  "ajoute_le": "2026-11-15T16:11:24Z",
+  "titre": "🥔 Rôti, en purée, en chips ou en soupe : le topinambour a bien plus d'un tour da",
+  "auteur_video": "CuisineAZ",
+  "temps_min": null,
+  "type": "autre",
+  "portions": null,
+  "ingredients": [],
+  "etapes": [],
+  "image": "img/ig_DfusbLigDP6.jpg",
+  "statut": "a_completer",
+  "source_extraction": null,
+  "note": "Pas de clé Gemini : à compléter à la main."
+ },
+ {
+  "id": "tt_7707346536384007446",
+  "url": "https://www.tiktok.com/@cuisineaz/video/7707346536384007446",
+  "plateforme": "tiktok",
+  "par": [
+   "Test"
+  ],
+  "ajoute_le": "2026-11-15T16:11:24Z",
+  "titre": "À l’eau, à la vapeur, à la poêle ou au four… Découvrez les différentes cuissons ",
+  "auteur_video": "cuisineaz",
+  "temps_min": null,
+  "type": "autre",
+  "portions": null,
+  "ingredients": [],
+  "etapes": [],
+  "image": "img/tt_7707346536384007446.jpg",
+  "statut": "a_completer",
+  "source_extraction": null,
+  "note": "Pas de clé Gemini : à compléter à la main."
+ }
+]
