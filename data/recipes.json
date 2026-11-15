@@ -922,6 +922,140 @@
   "note": ""
  },
  {
+  "id": "ig_DbiOcXnNW8G",
+  "url": "https://www.instagram.com/reel/DbiOcXnNW8G/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Carpaccio de figues",
+  "auteur_video": "Dorina | Recipe Developer",
+  "temps_min": 10,
+  "type": "entrée",
+  "portions": 2,
+  "ingredients": [
+   {
+    "nom": "4-5 figues fraîches, pelées et coupées en deux",
+    "base": "figue"
+   },
+   {
+    "nom": "1 burrata",
+    "base": "burrata"
+   },
+   {
+    "nom": "1/2 cuillère à café de sel",
+    "base": "sel"
+   },
+   {
+    "nom": "pistaches concassées",
+    "base": "pistache"
+   },
+   {
+    "nom": "roquette",
+    "base": "roquette"
+   },
+   {
+    "nom": "crème de balsamique",
+    "base": "vinaigre balsamique"
+   },
+   {
+    "nom": "huile d'olive extra vierge",
+    "base": "huile d'olive"
+   }
+  ],
+  "etapes": [
+   "Disposer les figues sur une assiette et les écraser à l'aide d'un verre pour obtenir une fine couche.",
+   "Ajouter la burrata, la roquette, le sel sur la burrata, les pistaches, la crème de balsamique et arroser d'huile d'olive extra vierge."
+  ],
+  "image": "img/ig_DbiOcXnNW8G.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_Da2q_JCMT8C",
+  "url": "https://www.instagram.com/reel/Da2q_JCMT8C/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Billes de fromage panées croustillantes",
+  "auteur_video": "Ninja France",
+  "temps_min": 10,
+  "type": "apéro",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "billes de fromage",
+    "base": "fromage"
+   },
+   {
+    "nom": "œufs battus",
+    "base": "œuf"
+   },
+   {
+    "nom": "chapelure",
+    "base": "chapelure"
+   }
+  ],
+  "etapes": [
+   "Tremper chaque bille de fromage dans l'œuf battu.",
+   "Enrober la bille de fromage dans la chapelure.",
+   "Disposer les billes dans la cuve de l'air fryer.",
+   "Faire cuire à l'air fryer."
+  ],
+  "image": "img/ig_Da2q_JCMT8C.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DaLQ5pcMYB7",
+  "url": "https://www.instagram.com/reel/DaLQ5pcMYB7/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Snack de pommes de terre croustillant",
+  "auteur_video": "Çiğdem Yıldız",
+  "temps_min": 30,
+  "type": "apéro",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "3-4 adet patates",
+    "base": "pomme de terre"
+   },
+   {
+    "nom": "3 adet tost ekmeği",
+    "base": "pain de mie"
+   },
+   {
+    "nom": "1 su bardağı nişasta",
+    "base": "fécule"
+   },
+   {
+    "nom": "Tuz, karabiber, pulbiber, kekik",
+    "base": "épices"
+   }
+  ],
+  "etapes": [
+   "Faire bouillir les pommes de terre et les écraser en purée.",
+   "Tremper les tranches de pain de mie dans l'eau, les essorer pour enlever l'excès d'eau et les ajouter à la purée.",
+   "Ajouter la fécule, le sel, le poivre, les flocons de piment et l'origan.",
+   "Pétrir le tout pour obtenir une pâte homogène.",
+   "Former des boudins, les couper en morceaux et façonner selon vos envies.",
+   "Faire frire dans de l'huile chaude jusqu'à ce qu'ils soient dorés et croustillants."
+  ],
+  "image": "img/ig_DaLQ5pcMYB7.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DfvZSTmudWM",
   "url": "https://www.instagram.com/reel/DfvZSTmudWM/",
   "plateforme": "instagram",
