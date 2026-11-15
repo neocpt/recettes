@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nos recettes</title>
+<meta name="theme-color" content="#e8693c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recettes">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<header class="top">
+  <h1>Nos recettes <span id="count" class="count"></span></h1>
+  <button id="btnSettings" class="icon-btn" aria-label="Réglages">⚙️</button>
+</header>
+
+<main>
+  <section class="search">
+    <label for="ingInput" class="lbl">Ce que j'ai dans le frigo</label>
+    <div class="ing-box">
+      <div id="chips" class="chips"></div>
+      <input id="ingInput" list="ingList" placeholder="poulet, riz, crème…" autocomplete="off" enterkeyhint="done">
+      <datalist id="ingList"></datalist>
+    </div>
+    <p class="hint">Sel, poivre, huile, sucre, farine et eau ne comptent pas (réglable dans ⚙️).</p>
+
+    <div class="filters">
+      <div class="seg" id="fTemps" role="group" aria-label="Temps maximum">
+        <button data-v="0" class="on">Tout temps</button>
+        <button data-v="15">≤ 15 min</button>
+        <button data-v="30">≤ 30</button>
+        <button data-v="45">≤ 45</button>
+        <button data-v="60">≤ 1 h</button>
+      </div>
+      <div class="row">
+        <select id="fType" aria-label="Type de plat"><option value="">Tous les types</option></select>
+        <select id="fQui" aria-label="Qui l'a ajoutée"><option value="">De nous deux</option></select>
+      </div>
+    </div>
+
+    <button id="btnRandom" class="big-btn">🎲 Au hasard</button>
+  </section>
+
+  <div id="pending" class="pending" hidden></div>
+  <div id="results"></div>
+</main>
+
+<!-- Fiche recette -->
+<dialog id="dlgRecipe" class="sheet"><div id="recipeBody"></div></dialog>
+
+<!-- Modification -->
+<dialog id="dlgEdit" class="sheet">
+  <form id="editForm" method="dialog">
+    <h2>Modifier la recette</h2>
+    <label>Titre <input name="titre" required></label>
+    <div class="row">
+      <label>Temps (min) <input name="temps_min" type="number" min="0" inputmode="numeric"></label>
+      <label>Type <select name="type"></select></label>
+    </div>
+    <label>Ingrédients <small>(un par ligne)</small><textarea name="ingredients" rows="8"></textarea></label>
+    <label>Étapes <small>(une par ligne)</small><textarea name="etapes" rows="8"></textarea></label>
+    <div class="actions">
+      <button type="button" class="ghost" data-close>Annuler</button>
+      <button type="submit" class="primary">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Réglages -->
+<dialog id="dlgSettings" class="sheet">
+  <form id="settingsForm" method="dialog">
+    <h2>Réglages</h2>
+    <label>Ton prénom <small>(pour savoir qui a ajouté quoi)</small><input name="prenom" required autocomplete="given-name"></label>
+    <label>Code d'accès <small>(fourni une seule fois, reste sur ce téléphone)</small><input name="token" type="password" autocomplete="off" spellcheck="false"></label>
+    <label>Basiques ignorés dans la recherche <small>(séparés par des virgules)</small><input name="basiques"></label>
+    <div class="actions">
+      <button type="button" class="ghost" data-close>Fermer</button>
+      <button type="submit" class="primary">Enregistrer</button>
+    </div>
+  </form>
+  <hr>
+  <h3>Importer d'un coup</h3>
+  <p class="small">Fichier d'export Instagram ou TikTok (.zip ou .json). Voir le guide pour l'obtenir.</p>
+  <div><input id="importFile" type="file" accept=".zip,.json,application/zip,application/json"></div>
+  <div id="importResult"></div>
+  <hr>
+  <p class="small">Ajouter un lien à la main :</p>
+  <div class="row"><input id="manualUrl" type="url" placeholder="https://www.instagram.com/reel/…"><button id="btnManual" class="primary" style="flex:none">Ajouter</button></div>
+</dialog>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="common.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
