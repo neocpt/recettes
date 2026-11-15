@@ -7,17 +7,65 @@
    "Néo"
   ],
   "ajoute_le": "2026-11-15T18:16:16Z",
-  "titre": "Recette sans titre",
-  "auteur_video": "",
-  "temps_min": null,
-  "type": "autre",
+  "titre": "Mac & Cheese minute à la poêle",
+  "auteur_video": "Christina Frangipane",
+  "temps_min": 15,
+  "type": "plat",
   "portions": null,
-  "ingredients": [],
-  "etapes": [],
-  "image": null,
-  "statut": "a_completer",
-  "source_extraction": null,
-  "note": "Vidéo et description inaccessibles (compte privé ou blocage). À compléter à la main."
+  "ingredients": [
+   {
+    "nom": "3 cups dry wagon wheels",
+    "base": "pâte"
+   },
+   {
+    "nom": "2 cups bone broth",
+    "base": "bouillon"
+   },
+   {
+    "nom": "1 1/4 cups heavy cream",
+    "base": "crème fraîche"
+   },
+   {
+    "nom": "1 tsp salt",
+    "base": "sel"
+   },
+   {
+    "nom": "1 tsp garlic powder",
+    "base": "ail en poudre"
+   },
+   {
+    "nom": "1 tsp onion powder",
+    "base": "oignon en poudre"
+   },
+   {
+    "nom": "1 tsp paprika",
+    "base": "paprika"
+   },
+   {
+    "nom": "0.5 tsp black pepper",
+    "base": "poivre noir"
+   },
+   {
+    "nom": "1 cup shredded white cheddar",
+    "base": "cheddar blanc"
+   },
+   {
+    "nom": "1 cup shredded yellow cheddar",
+    "base": "cheddar"
+   }
+  ],
+  "etapes": [
+   "Verser les pâtes sèches dans une grande poêle à feu doux.",
+   "Ajouter le bouillon et la crème, puis mélanger pour bien enrober les pâtes.",
+   "Couvrir et cuire environ 8 minutes jusqu'à ce que les pâtes soient al dente.",
+   "Ajouter les assaisonnements et laisser mijoter quelques minutes.",
+   "Incorporer les fromages râpés et mélanger jusqu'à l'obtention d'une sauce onctueuse.",
+   "Rectifier l'assaisonnement si nécessaire et déguster."
+  ],
+  "image": "img/ig_DdEXeSkxVJO.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
  },
  {
   "id": "ig_DcXTxs6O69n",
