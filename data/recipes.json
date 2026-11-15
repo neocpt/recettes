@@ -1,5 +1,91 @@
 [
  {
+  "id": "ig_DfFdXaSpuUk",
+  "url": "https://www.instagram.com/reel/DfFdXaSpuUk/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:38:11Z",
+  "titre": "Pain à l'ail et au parmesan",
+  "auteur_video": "MÉSIKA",
+  "temps_min": 75,
+  "type": "apéro",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "500g bread flour",
+    "base": "farine"
+   },
+   {
+    "nom": "1 tbsp dry yeast",
+    "base": "levure de boulanger"
+   },
+   {
+    "nom": "2 tbsp sugar",
+    "base": "sucre"
+   },
+   {
+    "nom": "2 tbsp honey",
+    "base": "miel"
+   },
+   {
+    "nom": "250ml water",
+    "base": "eau"
+   },
+   {
+    "nom": "50g canola oil",
+    "base": "huile de colza"
+   },
+   {
+    "nom": "½ tbsp salt",
+    "base": "sel"
+   },
+   {
+    "nom": "1 cup peeled garlic cloves",
+    "base": "ail"
+   },
+   {
+    "nom": "Olive oil",
+    "base": "huile d'olive"
+   },
+   {
+    "nom": "3 tbsp softened butter",
+    "base": "beurre"
+   },
+   {
+    "nom": "2 tbsp chopped parsley",
+    "base": "persil"
+   },
+   {
+    "nom": "1 tsp chili flakes",
+    "base": "piment"
+   },
+   {
+    "nom": "1 tsp sesame seeds",
+    "base": "sésame"
+   },
+   {
+    "nom": "Grated parmesan cheese",
+    "base": "parmesan"
+   }
+  ],
+  "etapes": [
+   "Mélanger la levure, le sucre et l'eau. Laisser reposer quelques minutes.",
+   "Ajouter la farine, le miel et l'huile. Pétrir, puis ajouter le sel et continuer à pétrir jusqu'à l'obtention d'une pâte lisse.",
+   "Couvrir et laisser lever pendant 1 heure.",
+   "Recouvrir les gousses d'ail d'huile d'olive et cuire à basse température jusqu'à ce qu'elles soient tendres et dorées.",
+   "Écraser l'ail et le mélanger avec le beurre, le persil, les flocons de piment et les graines de sésame.",
+   "Couper la pâte en petits morceaux.",
+   "Enrober chaque morceau de pâte dans le mélange d'ail et de beurre, puis dans le parmesan râpé.",
+   "Disposer les boules de pâte dans un moule et cuire au four à 175°C pendant environ 40 minutes."
+  ],
+  "image": "img/ig_DfFdXaSpuUk.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_Dd_tNf8MaaN",
   "url": "https://www.instagram.com/reel/Dd_tNf8MaaN/",
   "plateforme": "instagram",
@@ -1356,6 +1442,58 @@
    "Napper de glaçage avant de servir."
   ],
   "image": "img/ig_DWcBQ4KkSlw.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
+  "id": "ig_DYcnzIdIwmn",
+  "url": "https://www.instagram.com/reel/DYcnzIdIwmn/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-15T17:15:52Z",
+  "titre": "Pochettes de pommes de terre farcies au fromage",
+  "auteur_video": "i like to bake🫐🍰",
+  "temps_min": 30,
+  "type": "plat",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "pommes de terre cuites",
+    "base": "pomme de terre"
+   },
+   {
+    "nom": "farine",
+    "base": "farine"
+   },
+   {
+    "nom": "épices",
+    "base": "épice"
+   },
+   {
+    "nom": "herbes",
+    "base": "herbe"
+   },
+   {
+    "nom": "huile d'olive",
+    "base": "huile d'olive"
+   },
+   {
+    "nom": "fromage râpé",
+    "base": "fromage"
+   }
+  ],
+  "etapes": [
+   "Écraser les pommes de terre cuites dans un grand bol à l'aide d'une fourchette.",
+   "Ajouter la farine, les épices, les herbes et un filet d'huile d'olive.",
+   "Pétrir le mélange pour obtenir une pâte homogène.",
+   "Former des boules de pâte, les aplatir légèrement et les farcir de fromage râpé, puis refermer soigneusement.",
+   "Aplatir chaque boule sur un plan de travail fariné pour former des galettes.",
+   "Faire chauffer de l'huile d'olive dans une poêle et y faire dorer les pochettes de chaque côté jusqu'à ce qu'elles soient croustillantes et dorées."
+  ],
+  "image": "img/ig_DYcnzIdIwmn.jpg",
   "statut": "ok",
   "source_extraction": "video",
   "note": ""
