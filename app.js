@@ -43,12 +43,13 @@ function baseOf(line) {
 
 // ---------------------------------------------------------------- données
 async function loadData() {
-  const { token } = cfg();
+  const token = cleanToken(cfg().token);
   let data = null;
-  if (ON_GITHUB) { // l'API GitHub renvoie la version la plus fraîche (le site met ~1 min à se mettre à jour)
+  // Avec un code d'accès, l'API GitHub donne la version la plus fraîche (le site met ~1 min à se mettre à jour).
+  // Sans code, on lit seulement le site : GitHub limite les appels anonymes à 60/heure.
+  if (ON_GITHUB && token) {
     try {
-      const h = { Accept: 'application/vnd.github.raw+json' };
-      if (token) h.Authorization = `Bearer ${token}`;
+      const h = { Accept: 'application/vnd.github.raw+json', Authorization: `Bearer ${token}` };
       const r = await fetch(`${API}/contents/data/recipes.json`, { headers: h, cache: 'no-store' });
       if (r.ok) data = await r.json();
     } catch { /* on tente la copie du site */ }
@@ -66,11 +67,10 @@ async function loadData() {
 }
 
 async function checkPending() {
-  if (!ON_GITHUB) return;
+  const token = cleanToken(cfg().token);
+  if (!ON_GITHUB || !token) return;
   try {
-    const { token } = cfg();
-    const h = { Accept: 'application/vnd.github+json' };
-    if (token) h.Authorization = `Bearer ${token}`;
+    const h = { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}` };
     const r = await fetch(`${API}/issues?state=open&per_page=100&creator=${REPO.owner}`, { headers: h, cache: 'no-store' });
     if (!r.ok) return;
     const open = (await r.json()).filter((i) => !i.pull_request && i.title.toLowerCase().startsWith('[recette]'));

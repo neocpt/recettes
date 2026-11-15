@@ -30,6 +30,7 @@ async function checkToken(token) {
     const r = await fetch(`${API}/issues?per_page=1`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }, cache: 'no-store' });
     if (r.ok) return "✓ Code d'accès valide";
     if (r.status === 401) return "✗ Code refusé par GitHub : il est incomplet ou mal copié";
+    if (r.headers.get('x-ratelimit-remaining') === '0') return '✗ GitHub limite les vérifications, réessaie dans quelques minutes';
     if (r.status === 403 || r.status === 404) return "✗ Ce code n'a pas accès au dépôt recettes";
     return `✗ GitHub a répondu ${r.status}`;
   } catch { return '✗ Pas de connexion internet'; }
