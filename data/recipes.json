@@ -1,5 +1,74 @@
 [
  {
+  "id": "ig_DgGEWm0xBAq",
+  "url": "https://www.instagram.com/reel/DgGEWm0xBAq/",
+  "plateforme": "instagram",
+  "par": [
+   "Néo"
+  ],
+  "ajoute_le": "2026-11-24T08:10:26Z",
+  "titre": "Tarte Tatin aux oignons rouges et au balsamic",
+  "auteur_video": "Stewart Miller-White",
+  "temps_min": 40,
+  "type": "plat",
+  "portions": null,
+  "ingredients": [
+   {
+    "nom": "2-3 oignons rouges coupés en quartiers",
+    "base": "oignon rouge"
+   },
+   {
+    "nom": "30 g de beurre en cubes",
+    "base": "beurre"
+   },
+   {
+    "nom": "1 cuillère à soupe de sucre en poudre",
+    "base": "sucre"
+   },
+   {
+    "nom": "1 cuillère à café de thym séché",
+    "base": "thym"
+   },
+   {
+    "nom": "40 ml de vinaigre balsamique",
+    "base": "vinaigre balsamique"
+   },
+   {
+    "nom": "1 pâte feuilletée déroulée",
+    "base": "pâte feuilletée"
+   },
+   {
+    "nom": "Une pincée de sel et de poivre noir",
+    "base": "sel"
+   },
+   {
+    "nom": "1/2 burrata",
+    "base": "burrata"
+   },
+   {
+    "nom": "Ciboulette hachée",
+    "base": "ciboulette"
+   },
+   {
+    "nom": "Glaçage balsamique",
+    "base": "glaçage balsamique"
+   }
+  ],
+  "etapes": [
+   "Faire revenir les quartiers d'oignons rouges dans une poêle avec un peu d'huile à feu moyen pendant 5 à 8 minutes.",
+   "Ajouter les cubes de beurre et laisser fondre.",
+   "Assaisonner avec du sel et du poivre, puis saupoudrer de sucre et de thym.",
+   "Verser le vinaigre balsamique et laisser mijoter 5 minutes.",
+   "Recouvrir avec la pâte feuilletée, piquer avec une fourchette et faire un trou au centre.",
+   "Enfourner 25 minutes à 180°C (chaleur tournante).",
+   "Démouler sur une assiette, garnir avec la burrata, la ciboulette et le glaçage balsamique."
+  ],
+  "image": "img/ig_DgGEWm0xBAq.jpg",
+  "statut": "ok",
+  "source_extraction": "video",
+  "note": ""
+ },
+ {
   "id": "ig_DdEXeSkxVJO",
   "url": "https://www.instagram.com/reel/DdEXeSkxVJO/",
   "plateforme": "instagram",
